@@ -1,0 +1,24 @@
+<form method="get">
+    <label for="month">Select Month:</label>
+    <input type="month" id="month" name="month" value="{{ selected_month }}">
+
+    <label for="color">Select Color:</label>
+    <select id="color" name="color">
+        <option value="">--Select--</option>
+        <option value="5" {% if selected_color == '5' %}selected{% endif %}>Nhu</option>
+        <option value="3" {% if selected_color == '3' %}selected{% endif %}>Star</option>
+        <option value="6" {% if selected_color == '6' %}selected{% endif %}>Ana</option>
+        <option value="9" {% if selected_color == '9' %}selected{% endif %}>Mark</option>
+        <!-- Add more color options as needed -->
+    </select>
+
+    <button type="submit">Filter</button>
+</form>
+
+<ul>
+    {% for event in events %}
+        <li style="color: {{ event.color }}">
+            {{ event.summary }} ({{ event.start_time }} - {{ event.end_time }})
+        </li>
+    {% endfor %}
+</ul>
