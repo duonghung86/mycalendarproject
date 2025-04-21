@@ -1,0 +1,29 @@
+.color-3 { background-color: #dbadff; color: #1d1d1d; }  /* Blue */
+.color-6 { background-color: #ffb878; color: #1d1d1d; }  /* Green */
+.color-9 { background-color: #5484ed; color: #1d1d1d; }  /* Purple */
+.color-5 { background-color: #fbd75b; color: #1d1d1d; }  /* Yellow */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+thead {
+    background-color: #fdfdfd;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+tbody tr:hover {
+    background-color: #f1f1f1; /* Highlight on hover */
+}
+
+tbody tr {
+    background-color: white;
+    color: black; /* Ensure text contrasts with the row's background color */
+}

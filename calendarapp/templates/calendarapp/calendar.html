@@ -1,3 +1,7 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'calendarapp/styles.css' %}">
+
+
 <form method="get">
     <label for="month">Select Month:</label>
     <input type="month" id="month" name="month" value="{{ selected_month }}">
@@ -5,20 +9,43 @@
     <label for="color">Select Color:</label>
     <select id="color" name="color">
         <option value="">--Select--</option>
-        <option value="5" {% if selected_color == '5' %}selected{% endif %}>Nhu</option>
-        <option value="3" {% if selected_color == '3' %}selected{% endif %}>Star</option>
-        <option value="6" {% if selected_color == '6' %}selected{% endif %}>Ana</option>
-        <option value="9" {% if selected_color == '9' %}selected{% endif %}>Mark</option>
+        <option value="5" class="color-5" {% if selected_color == '5' %}selected{% else %}selected{% endif %}>Nhu</option>
+        <option value="3" class="color-3" {% if selected_color == '3' %}selected{% endif %}>Star</option>
+        <option value="6" class="color-6" {% if selected_color == '6' %}selected{% endif %}>Ana</option>
+        <option value="9" class="color-9" {% if selected_color == '9' %}selected{% endif %}>Mark</option>
         <!-- Add more color options as needed -->
     </select>
+
+    <label for="search_query">Search Event Summary:</label>
+    <input type="text" id="search_query" name="search_query" value="{{ search_query }}" placeholder="Enter event summary">
 
     <button type="submit">Filter</button>
 </form>
 
-<ul>
-    {% for event in events %}
-        <li style="color: {{ event.color }}">
-            {{ event.summary }} ({{ event.start_time }} - {{ event.end_time }})
-        </li>
-    {% endfor %}
-</ul>
+{% if selected_month %}
+    <h2>Total Duration for {{ selected_month }}: {{ total_duration|floatformat:2 }} minutes</h2>
+{% else %}
+    <h2>Total Duration: {{ total_duration|floatformat:2 }} minutes</h2>
+{% endif %}
+
+<h3>Event details</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Event</th>
+            <th>Duration (minutes)</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for event in events %}
+        <tr>
+            <td>{{ event.summary }}</td>
+            <td>{{ event.duration|floatformat:0 }}</td>
+            <td>{{ event.start_time }}</td>
+            <td>{{ event.end_time }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
