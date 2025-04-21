@@ -37,7 +37,7 @@ def calendar_view(request):
     # now = datetime.datetime.utcnow().isoformat() + 'Z'
     
     selected_month = request.GET.get('month')
-    print(selected_month)
+    # print(selected_month)
     timezone = timedelta(hours=6)
     if selected_month is None:
         now = datetime.now()
@@ -49,15 +49,15 @@ def calendar_view(request):
     if MONTH != 12:
         tmax = datetime(YEAR,MONTH+1,1) + timezone
         tmin = datetime(YEAR,MONTH,1,1) + timezone
-        nod = tmax-tmin
+        # nod = tmax-tmin
     else:
         tmax = datetime(YEAR+1,1,1) + timezone
         tmin = datetime(YEAR,12,1) + timezone
-        nod = tmax-tmin
-    nod = int((tmax-2*timezone).day)
+        # nod = tmax-tmin
+    # nod = int((tmax-2*timezone).day)
     tmax = tmax.isoformat() + 'Z'
     tmin = tmin.isoformat() + 'Z'
-    print('Number of days in this month is ', nod)
+    # print('Number of days in this month is ', nod)
 
     events_result = service.events().list(calendarId='fbl0k2sutrlprdgc7sk5rcss3g@group.calendar.google.com', 
                                         timeMin=tmin,
@@ -77,7 +77,7 @@ def calendar_view(request):
         end_dt = datetime.fromisoformat(end_time)
         duration = end_dt - start_dt
         duration_in_minutes = round(duration.total_seconds() / 60,1)
-        print(duration_in_minutes)
+        # print(duration_in_minutes)
 
         CalendarEvent.objects.update_or_create(
             user=request.user,
@@ -119,7 +119,7 @@ def calendar_view(request):
         events = events.filter(summary__icontains=search_query)  # Case-insensitive search
 
     total_duration = sum(event.duration for event in events if event.duration is not None) if events else 0
-    print(total_duration)
+    # print(total_duration)
     context = {
         'events': events,
         'selected_month': selected_month,
