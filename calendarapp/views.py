@@ -8,6 +8,23 @@ from .models import CalendarEvent
 from datetime import datetime, timedelta
 import pickle
 import os
+from django.utils.timezone import localtime
+from dateutil import tz
+import re
+
+def extract_first_email(text):
+    email_pattern = re.compile(r"""
+        [a-zA-Z0-9._%+-]+   # username
+        @                   # @ symbol
+        [a-zA-Z0-9.-]+      # domain name
+        \.[a-zA-Z]{2,}      # dot-something
+    """, re.VERBOSE)
+    email_list = email_pattern.findall(text)
+    if len(email_list)==0:
+        return None
+    else:
+        return email_list[0]
+
 # Login view
 def login_view(request):
     if request.method == 'POST':
@@ -39,13 +56,14 @@ def calendar_view(request):
     selected_month = request.GET.get('month')
     # print(selected_month)
     timezone = timedelta(hours=6)
-    if selected_month is None:
+    try:
+        YEAR, MONTH = selected_month.split('-')
+        YEAR, MONTH = int(YEAR), int(MONTH)
+    except:
         now = datetime.now()
         YEAR = int(now.year)
         MONTH = int(now.month)
-    else:
-        YEAR, MONTH = selected_month.split('-')
-        YEAR, MONTH = int(YEAR), int(MONTH)
+        selected_month = f"{YEAR}-{MONTH}"
     if MONTH != 12:
         tmax = datetime(YEAR,MONTH+1,1) + timezone
         tmin = datetime(YEAR,MONTH,1,1) + timezone
@@ -67,25 +85,37 @@ def calendar_view(request):
                                         orderBy='startTime').execute()
     events = events_result.get('items', [])
 
+
+    CalendarEvent.objects.filter(
+                user=request.user,
+                start_time__startswith=selected_month
+            ).delete()
+
     # Store events in the database
     for event in events:
+        # get email
+        first_email = extract_first_email(event.get('summary', 'No Title'))
+        if first_email is None:
+            continue
+    
         start_time = event['start'].get('dateTime', event['start'].get('date'))
         end_time = event['end'].get('dateTime', event['end'].get('date'))
+        # Convert to local time zone
+        local_tz = tz.tzlocal()
 
         # Convert to datetime objects and calculate duration
-        start_dt = datetime.fromisoformat(start_time)
-        end_dt = datetime.fromisoformat(end_time)
+        start_dt = datetime.fromisoformat(start_time).astimezone(local_tz)
+        end_dt = datetime.fromisoformat(end_time).astimezone(local_tz)
         duration = end_dt - start_dt
         duration_in_minutes = round(duration.total_seconds() / 60,1)
-        # print(duration_in_minutes)
-
+        
         CalendarEvent.objects.update_or_create(
             user=request.user,
             event_id=event['id'],
             defaults={
                 'summary': event.get('summary', 'No Title'),
-                'start_time': event['start'].get('dateTime', event['start'].get('date')),
-                'end_time': event['end'].get('dateTime', event['end'].get('date')),
+                'start_time':start_dt.strftime('%Y-%m-%d %H:%M:%S'),
+                'end_time': end_dt.strftime('%Y-%m-%d %H:%M:%S'),
                 'color': event.get('colorId', None),
                 'duration': duration_in_minutes 
             }
@@ -118,7 +148,7 @@ def calendar_view(request):
     if search_query:
         events = events.filter(summary__icontains=search_query)  # Case-insensitive search
 
-    total_duration = sum(event.duration for event in events if event.duration is not None) if events else 0
+    total_duration = sum(event.duration for event in events) if events else 0
     # print(total_duration)
     context = {
         'events': events,

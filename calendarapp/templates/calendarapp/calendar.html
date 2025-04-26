@@ -25,7 +25,7 @@
 {% if selected_month %}
     <h2>Total Duration for {{ selected_month }}: {{ total_duration|floatformat:2 }} minutes</h2>
 {% else %}
-    <h2>Total Duration: {{ total_duration|floatformat:2 }} minutes</h2>
+    <h2>Total Duration: {{ total_duration|floatformat:0 }} minutes</h2>
 {% endif %}
 
 <h3>Event details</h3>
