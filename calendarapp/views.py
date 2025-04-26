@@ -149,6 +149,7 @@ def calendar_view(request):
         events = events.filter(summary__icontains=search_query)  # Case-insensitive search
 
     total_duration = sum(event.duration for event in events) if events else 0
+    total_duration_hour = round(total_duration/60)
     # print(total_duration)
     # Get sorting column and direction
     sort_by = request.GET.get("sort_by", "start_time")  # Default to start_time
@@ -167,8 +168,10 @@ def calendar_view(request):
         'sort_by': sort_by,
         'order': order,
         'selected_month': selected_month,
+        'selected_color': selected_color,
         'search_query': search_query,
-        'total_duration': total_duration,  # Pass the total duration to the template
+        'total_duration': total_duration,
+        'total_duration_hour': total_duration_hour,    # Pass the total duration to the template
     }
     return render(request, 'calendar.html', context)
 

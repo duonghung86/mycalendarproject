@@ -8,7 +8,7 @@
 
     <label for="color">Select Color:</label>
     <select id="color" name="color">
-        <option value="">--Select--</option>
+        <option value="{{ selected_color }}">--Select--</option>
         <option value="5" class="color-5" {% if selected_color == '5' %}selected{% endif %}>Nhu</option>
         <option value="3" class="color-3" {% if selected_color == '3' %}selected{% endif %}>Star</option>
         <option value="6" class="color-6" {% if selected_color == '6' %}selected{% endif %}>Ana</option>
@@ -23,7 +23,7 @@
 </form>
 
 {% if selected_month %}
-    <h2>Total Duration for {{ selected_month }}: {{ total_duration|floatformat:2 }} minutes</h2>
+    <h2>Total Duration for {{ selected_month }}: {{ total_duration|floatformat:0 }} minutes ({{ total_duration_hour|floatformat:2 }} hours)</h2>
 {% else %}
     <h2>Total Duration: {{ total_duration|floatformat:0 }} minutes</h2>
 {% endif %}
