@@ -52,8 +52,8 @@ def calendar_view(request):
     # creds = Credentials.from_authorized_user_file('token.json', ['https://www.googleapis.com/auth/calendar.readonly'])
     service = build('calendar', 'v3', credentials=creds)
     # now = datetime.datetime.utcnow().isoformat() + 'Z'
-    
-    selected_month = request.GET.get('month')
+    current_month = datetime.now().strftime('%Y-%m')
+    selected_month = request.GET.get('month',current_month)
     # print(selected_month)
     timezone = timedelta(hours=6)
     try:
@@ -86,10 +86,10 @@ def calendar_view(request):
     events = events_result.get('items', [])
 
 
-    CalendarEvent.objects.filter(
-                user=request.user,
-                start_time__startswith=selected_month
-            ).delete()
+    # CalendarEvent.objects.filter(
+    #             user=request.user,
+    #             start_time__startswith=selected_month
+    #         ).delete()
 
     # Store events in the database
     for event in events:
@@ -123,7 +123,7 @@ def calendar_view(request):
 
     # Filter by month
     # selected_month = request.GET.get('month')
-    selected_color = request.GET.get('color')
+    selected_color = request.GET.get('color',5)
     search_query = request.GET.get('search_query', '')
     
     if selected_month and selected_color:
@@ -150,8 +150,22 @@ def calendar_view(request):
 
     total_duration = sum(event.duration for event in events) if events else 0
     # print(total_duration)
+    # Get sorting column and direction
+    sort_by = request.GET.get("sort_by", "start_time")  # Default to start_time
+    order = request.GET.get("order", "asc")
+
+    # Apply sorting
+    if order == "asc":
+        events = events.order_by(sort_by)
+    else:
+        events = events.order_by(f"-{sort_by}")
+
+    
+
     context = {
         'events': events,
+        'sort_by': sort_by,
+        'order': order,
         'selected_month': selected_month,
         'search_query': search_query,
         'total_duration': total_duration,  # Pass the total duration to the template

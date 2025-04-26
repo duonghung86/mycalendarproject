@@ -9,7 +9,7 @@
     <label for="color">Select Color:</label>
     <select id="color" name="color">
         <option value="">--Select--</option>
-        <option value="5" class="color-5" {% if selected_color == '5' %}selected{% else %}selected{% endif %}>Nhu</option>
+        <option value="5" class="color-5" {% if selected_color == '5' %}selected{% endif %}>Nhu</option>
         <option value="3" class="color-3" {% if selected_color == '3' %}selected{% endif %}>Star</option>
         <option value="6" class="color-6" {% if selected_color == '6' %}selected{% endif %}>Ana</option>
         <option value="9" class="color-9" {% if selected_color == '9' %}selected{% endif %}>Mark</option>
@@ -32,10 +32,26 @@
 <table>
     <thead>
         <tr>
-            <th>Event</th>
-            <th>Duration (minutes)</th>
-            <th>Start Time</th>
-            <th>End Time</th>
+            <th>
+                <a href="?sort_by=summary&order={% if sort_by == 'summary' and order == 'asc' %}desc{% else %}asc{% endif %}">
+                    Event Summary {% if sort_by == 'summary' %}({{ order }}){% endif %}
+                </a>
+            </th>
+            <th>
+                <a href="?sort_by=duration&order={% if sort_by == 'duration' and order == 'asc' %}desc{% else %}asc{% endif %}">
+                    Duration {% if sort_by == 'duration' %}({{ order }}){% endif %}
+                </a>
+            </th>
+            <th>
+                <a href="?sort_by=start_time&order={% if sort_by == 'start_time' and order == 'asc' %}desc{% else %}asc{% endif %}">
+                    Start Time {% if sort_by == 'start_time' %}({{ order }}){% endif %}
+                </a>
+            </th>
+            <th>
+                <a href="?sort_by=end_time&order={% if sort_by == 'end_time' and order == 'asc' %}desc{% else %}asc{% endif %}">
+                    End Time {% if sort_by == 'end_time' %}({{ order }}){% endif %}
+                </a>
+            </th>
         </tr>
     </thead>
     <tbody>

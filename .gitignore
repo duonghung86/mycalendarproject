@@ -1,2 +1,4 @@
 token.pickle
 staticfiles
+calendarapp\__pycache__
+views.cpython*
