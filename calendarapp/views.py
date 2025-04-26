@@ -46,8 +46,8 @@ def logout_view(request):
 @login_required
 def calendar_view(request):
     # Load Google Calendar events
-    print(os.getcwd())
-    with open('token.pickle', 'rb') as token:
+    # print(os.getcwd())
+    with open(os.path.join(os.getcwd(),'token.pickle'), 'rb') as token:
         creds = pickle.load(token)
     # creds = Credentials.from_authorized_user_file('token.json', ['https://www.googleapis.com/auth/calendar.readonly'])
     service = build('calendar', 'v3', credentials=creds)
